@@ -47,7 +47,5 @@ class MenuViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Back to menu", style: UIAlertActionStyle.Default, handler: nil))
         self.presentViewController(alert, animated: true, completion: nil)
     }
-
-
 }
 
