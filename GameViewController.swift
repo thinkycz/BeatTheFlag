@@ -22,6 +22,7 @@ class GameViewController: UIViewController {
     var flagsArray: [FlagModel] = []
     var score = 0
     var timer : NSTimer!
+    let defaults = NSUserDefaults.standardUserDefaults()
     
     var currentFlag: FlagModel! {
         didSet {
@@ -97,21 +98,39 @@ class GameViewController: UIViewController {
     
     func showGameOver()
     {
-        self.timer.invalidate()
+        var streak = defaults.integerForKey("score")
         var alert = UIAlertController(title: "Game Over", message: "Your score is \(score)", preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "Share my score", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) -> Void in
-            self.dismissViewControllerAnimated(true, completion: nil)
+
+        if(score > streak)
+        {
+            defaults.setInteger(self.score, forKey: "score")
+            alert.message = "Your score is \(score) \n New high score, congratulations!"
+        }
+        
+        self.timer.invalidate()
+        alert.addAction(UIAlertAction(title: "Show the difference", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) -> Void in
+            self.performSegueWithIdentifier("showDifferenceSegue", sender: self)
         }))
         alert.addAction(UIAlertAction(title: "Back to menu", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) -> Void in
             self.dismissViewControllerAnimated(true, completion: nil)
         }))
         
         self.presentViewController(alert, animated: true, completion: nil)
+        Chartboost.showInterstitial(CBLocationHomeScreen)
     }
     
     func loadNextRandomFlag() {
         var randomNumber = Int(arc4random_uniform(UInt32(flagsArray.count)))
         self.currentFlag = flagsArray[randomNumber]
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if(segue.identifier! == "showDifferenceSegue" && segue.destinationViewController is DifferenceViewController)
+        {
+            var dvc = segue.destinationViewController as! DifferenceViewController
+            dvc.countryName = currentFlag.flagName
+            dvc.gvc = self
+        }
     }
     
     func importAllFlags()

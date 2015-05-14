@@ -9,13 +9,13 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, ChartboostDelegate {
 
     var window: UIWindow?
 
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        Chartboost.startWithAppId("5553bb2b0d6025563be72509", appSignature: "2757355ce8638e56e1a5a9e4764b456db5356a8e", delegate: self)
         return true
     }
 
