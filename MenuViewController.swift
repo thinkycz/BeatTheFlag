@@ -8,6 +8,7 @@
 
 import UIKit
 import GameKit
+import AVFoundation
 
 class MenuViewController: UIViewController, GKGameCenterControllerDelegate {
     
@@ -15,6 +16,10 @@ class MenuViewController: UIViewController, GKGameCenterControllerDelegate {
     @IBOutlet weak var streakLabel: UILabel!
     
     let defaults = NSUserDefaults.standardUserDefaults()
+    var clickSound = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("click", ofType: "wav")!)
+    var audioPlayer = AVAudioPlayer()
+    
+    
     var score: Int = 0 {
         didSet {
             self.streakLabel.text = "Streak: \(score)"
@@ -27,6 +32,8 @@ class MenuViewController: UIViewController, GKGameCenterControllerDelegate {
         
         self.playButton.layer.cornerRadius = 10
         self.playButton.clipsToBounds = true
+        audioPlayer = AVAudioPlayer(contentsOfURL: clickSound, error: nil)
+        audioPlayer.prepareToPlay()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -39,6 +46,7 @@ class MenuViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     @IBAction func playButtonPressed(sender: AnyObject) {
+        audioPlayer.play()
         //Segue happens here
     }
     
@@ -47,12 +55,13 @@ class MenuViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     @IBAction func shareButtonPressed(sender: AnyObject) {
-        let activityVC: UIActivityViewController = UIActivityViewController(activityItems: ["I scored \(score) in Beat The Flag, check it out!"], applicationActivities: nil)
+        let activityVC: UIActivityViewController! = UIActivityViewController(activityItems: ["I scored \(score) in Beat The Flag, check it out!"], applicationActivities: nil)
+        activityVC.popoverPresentationController?.sourceView = streakLabel
         self.presentViewController(activityVC, animated: true, completion: nil)
     }
     
     @IBAction func rateThisAppButtonPressed(sender: AnyObject) {
-        UIApplication.sharedApplication().openURL(NSURL(string: "itms-apps://itunes.apple.com/app/bars/id706081574")!)
+        UIApplication.sharedApplication().openURL(NSURL(string: "itms-apps://itunes.apple.com/app/beat-the-flag/id994857890")!)
     }
     
     @IBAction func creditsButtonPressed(sender: AnyObject) {
